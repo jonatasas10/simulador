@@ -1,0 +1,43 @@
+.table {
+    /*width: 100%;*/
+    margin-top: 10px;
+    margin-left: 10px;
+    border-collapse: collapse;
+
+}
+
+.table th,
+.table td {
+    border: 1px solid #000; /* This adds the grid lines */
+    padding: 2px 10px;
+    text-align: center;
+    font-family: Arial sans-serif;
+    font-size: 16px;
+
+
+}
+
+.table th {
+    background-color: #f4f4f4;
+}
+.inputTable{
+    width: 60px;
+   /* height: 100%;*/
+    padding: 8px 1px; /* Add padding inside the input for better click area */
+    display: block;
+    border: none;
+    text-align: center;
+    font-size: 16px;
+    font-family: Arial sans-serif;
+    /*border: none; !* Remove border *!
+    outline: none; !* Remove outline *!
+    position: absolute; !* Position input absolutely within the cell *!*/
+    top: 0;
+    left: 0;
+}
+
+.buttonReset{
+    margin-top: 10px;
+    padding: 5px 10px;
+    margin-left: 10px;
+}

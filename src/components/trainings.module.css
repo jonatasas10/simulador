@@ -1,0 +1,42 @@
+.train-container{
+    display: flex;
+}
+.table {
+    /*width: 100%;*/
+    margin-top: 10px;
+    margin-left: 30px;
+    border-collapse: collapse;
+
+}
+
+.table th,
+.table td {
+    border: 1px solid #000; /* This adds the grid lines */
+    padding: 4px 20px;
+    text-align: center;
+
+}
+
+.table th {
+    background-color: #f4f4f4;
+}
+
+.exercises{
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 20px;
+
+}
+
+
+.upDownBtn{
+    display: flex;
+    justify-content: space-between;
+}
+.upDownBtn button{
+    padding: 0 15px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
