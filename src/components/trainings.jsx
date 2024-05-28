@@ -291,7 +291,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, origi
                 //console.log(sum, "indice" ,index, "tam", item.length, " = ", sum / item.length, updatedValues[index], aux[index])
             const avgExercise = sum / item.length;
             //console.log(avgExercise);
-            newVal[index] = parseFloat(avgExercise.toFixed(2));
+            newVal[index] = parseFloat(avgExercise.toFixed(0));
         })
             setAvg(newVal);
         };
