@@ -7,6 +7,7 @@ function App() {
     const [attrValues, setAttrValues] = useState(Array(15).fill(100));
     const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(100));
     const [reset, setReset] = useState(true);
+    const [counter, setCounter] = useState(0);
 
     const attributes = {
         0: 'corte',
@@ -113,6 +114,7 @@ function App() {
     }
     const [packs, setPacks] = useState(0);
     const [sequencia, setSequencia] = useState([]);
+    const [playerPositions, setPlayerPositions] = useState(Array(15).fill(1));
 
     return (
         <>
@@ -128,6 +130,10 @@ function App() {
                             packs={packs}
                             setPacks={setPacks}
                             setSequencia={setSequencia}
+                            playerPositions={playerPositions}
+                            setPlayerPositions={setPlayerPositions}
+                            counter={counter}
+                            setCounter={setCounter}
                 />
                 <Trainings exercises={exercises}
                            attrs={attributes}
@@ -137,6 +143,10 @@ function App() {
                            originalAttributes={originalAttributes}
                            sequencia={sequencia}
                            setSequencia={setSequencia}
+                           packs={packs}
+                           playerPositions={playerPositions}
+                           counter={counter}
+                           setCounter={setCounter}
                 />
             </div>
 
