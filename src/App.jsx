@@ -4,11 +4,12 @@ import './App.css'
 import {useState} from "react";
 
 function App() {
-    const [attrValues, setAttrValues] = useState(Array(15).fill(100));
+    const [attrValues, setAttrValues] = useState(Array(15).fill(null));
     const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(100));
+    const [seqCount, setSeqCount] = useState([]);
+    const [prev, setPrev] = useState([]);
     const [reset, setReset] = useState(true);
     const [counter, setCounter] = useState(0);
-
     const attributes = {
         0: 'corte',
         1: 'marcaçao',
@@ -26,7 +27,7 @@ function App() {
         13: 'velocidade',
         14: 'criatividade'
     };
-    const attributesGK = [{
+    const attributesGK = {
         0: 'reflexos',
         1: 'agilidade',
         2: 'antecipação',
@@ -42,38 +43,15 @@ function App() {
         12: 'agressividade',
         13: 'velocidade',
         14: 'criatividade'
-    }]
-    const trainsOptions = [{
-        1: 'passe, vá, dispare',
-        2: 'marcar homem a homem',
-        3: 'jogada ensaiada',
-        4: 'técnica de chute',
-        5: 'drible de slalom',
-        6: 'jogo na ponta',
-        7: 'contra ataque rápido',
-        8: 'análise de vídeo',
-        9: 'cabeçada',
-        10: 'uma linha de defesa',
-        11: 'parar o atacante',
-        12: 'cruzamento da defesa',
-        13: 'treino de goleiro',
-        14: 'pressione o play',
-        15: 'controle de bola',
-        16: 'jogo de bobinho',
-        17: 'matada de bola',
-        18: 'virada de jogo',
-        19: 'posicionamento',
-        20: 'passes para o chute',
-        21: 'entradas',
-        22: 'aquecimento',
-        23: 'alongamento',
-        24: 'carioca com escadas',
-        25: 'corrida longa',
-        26: 'corrida de ir e vir',
-        27: 'corrida de obstáculo',
-        28: 'academia',
-        29: 'arrancada'
-    }];
+    };
+    const exercises = []
+    const [packs, setPacks] = useState(0);
+    const [sequencia, setSequencia] = useState([]);
+    const [positionsList, setPositionsList] = useState([]);
+    const [playerPositions, setPlayerPositions] = useState(Array(15).fill(1));
+    const [currentAvg, setCurrentAvg] = useState(0);
+    const [add, setAdd] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState([]);
     const trainsAttrs = {
         // Posição 1 = Jogador de linha; Posição 2 = GK
         1: [[5, 8, 13], [2, 13]],
@@ -107,14 +85,9 @@ function App() {
         29: [[6, 10, 13], [3, 10, 13]]
     };
 
-    //console.log(trainsAttrs[1][0])
-    const exercises = []
     for (let i = 1; i <= 29; i++) {
-        exercises.push(trainsAttrs[i][0]);
+        positionsList[0] !== 'GK' ? exercises.push(trainsAttrs[i][0]) : exercises.push(trainsAttrs[i][1]);
     }
-    const [packs, setPacks] = useState(0);
-    const [sequencia, setSequencia] = useState([]);
-    const [playerPositions, setPlayerPositions] = useState(Array(15).fill(1));
 
     return (
         <>
@@ -122,7 +95,7 @@ function App() {
             <div className="table-container">
                 <Attributes original={originalAttributes}
                             setOriginal={setOriginAttributes}
-                            attrs={attributes}
+                            attrs={positionsList[0] !== 'GK' ? attributes : attributesGK}
                             attrValues={attrValues}
                             setAttrValues={setAttrValues}
                             reset={reset}
@@ -134,9 +107,15 @@ function App() {
                             setPlayerPositions={setPlayerPositions}
                             counter={counter}
                             setCounter={setCounter}
+                            positionsList={positionsList}
+                            setPositionsList={setPositionsList}
+                            setSeqCount={setSeqCount}
+                            setCurrentIndex={setCurrentIndex}
+                            setPrev={setPrev}
+                            setAdd={setAdd}
                 />
                 <Trainings exercises={exercises}
-                           attrs={attributes}
+                           attrs={positionsList[0] !== 'GK' ? attributes : attributesGK}
                            attrValues={attrValues}
                            setAttrValues={setAttrValues}
                            setPacks={setPacks}
@@ -147,9 +126,19 @@ function App() {
                            playerPositions={playerPositions}
                            counter={counter}
                            setCounter={setCounter}
+                           currentAvg={currentAvg}
+                           setCurrentAvg={setCurrentAvg}
+                           add={add}
+                           setAdd={setAdd}
+                           positionsList={positionsList}
+                           seqCount={seqCount}
+                           setSeqCount={setSeqCount}
+                           currentIndex={currentIndex}
+                           setCurrentIndex={setCurrentIndex}
+                           prev={prev}
+                           setPrev={setPrev}
                 />
             </div>
-
         </>
     )
 }

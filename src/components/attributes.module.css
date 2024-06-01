@@ -6,6 +6,26 @@
 
 }
 
+.buttons{
+    margin-left: 12px;
+    margin-top: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    gap: 5px;
+    display: flex;
+
+}
+
+.buttons select{
+    display: inline-block;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+
+}
+
 .table th,
 .table td {
     border: 1px solid #000; /* This adds the grid lines */
@@ -18,24 +38,29 @@
 }
 
 .table th {
-    background-color: #f4f4f4;
+    background-color: #b5b5b5;
 }
 .inputTable{
     width: 60px;
-   /* height: 100%;*/
     padding: 8px 1px; /* Add padding inside the input for better click area */
     display: block;
     border: none;
+    box-sizing: border-box;
     text-align: center;
     font-size: 16px;
     font-family: Arial sans-serif;
-    /*border: none; !* Remove border *!
-    outline: none; !* Remove outline *!
-    position: absolute; !* Position input absolutely within the cell *!*/
     top: 0;
     left: 0;
+    background-color: transparent;
 }
 
+.attrColorGray{
+    background-color: #c8c8c8;
+}
+.attrWhite{
+    /*background-color: #ffffff;*/
+    background-color: white;
+}
 .buttonReset{
     margin-top: 10px;
     padding: 5px 10px;

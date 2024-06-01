@@ -1,20 +1,13 @@
 import {useEffect, useRef, useState} from "react";
 import TableStyles from "./trainings.module.css"
-import PropTypes, {array} from "prop-types";
-/*
-import {i} from "vite/dist/node/types.d-aGj9QkWt.js";
-*/
+import PropTypes from "prop-types";
 
-
-function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, counter, setCounter, sequencia, setSequencia, playerPositions}) {
-
+function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counter, setCounter, sequencia,
+                    setSequencia, playerPositions, currentAvg, setCurrentAvg, add, setAdd, positionsList,
+                    seqCount, setSeqCount, currentIndex, setCurrentIndex, prev, setPrev}) {
 
     const [test, setTest] = useState(0);
-    const [currentAvg, setCurrentAvg] = useState(0);
-    const [add, setAdd] = useState(0);
-    const [prev, setPrev] = useState([]);
     const intervalRef = useRef(null);
-    const [currentIndex, setCurrentIndex] = useState([]);
     const trainsOptions = [
         'passe, vá, dispare',
         'marcar homem a homem',
@@ -47,13 +40,8 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
         'arrancada'
 
     ];
-    const [seqCount, setSeqCount] = useState([]);
-
     const info = ['Exercício', 'Brancos', 'Cinzas', 'Média', 'Treinar'];
-
     const position = [...playerPositions];
-
-
     const brancos = exercises.map((item) => {
         return(item.filter(attr => position[attr] === 2).map(attr => attrs[attr]).join(', '));
     });
@@ -65,7 +53,6 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
     const trainingCondition = (exercise) => {
         const updateAttr = exercises[exercise];
         let status = true;
-
         for(let i = 0; i < updateAttr.length; i++) {
             let item = updateAttr[i];
             if (position[item] === 1) {
@@ -78,13 +65,12 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
 
     const stopInterval = () => {
         if (intervalRef.current) {
-            console.log("parado")
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
     };
-    const handleAttributesOnUpdate = (attr) => {
 
+    const handleAttributesOnUpdate = (attr) => {
         let soma = 0;
         let somaTotal = [];
 
@@ -92,12 +78,9 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
             const updateAttr = exercises[attr];
             const aux = [...newValues];
             const fim = trainingCondition(attr);
-            console.log(aux);
-            console.log("COND", attr, updateAttr);
 
             const updatedValues = aux.map((item, index) => {
                 if (updateAttr.includes(index) && avg[attr] < 179) {
-                    console.log("SET: ", updateAttr, index);
                     if (fim) {
                         item = item < 340 ? item + 1 : item;
                         soma += 1;
@@ -110,35 +93,27 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
                 return item;
             });
 
-            // Calculate newExAvg and media within this callback
-            const newExAvg = somaTotal.reduce((acc, val) => acc + val, 0) / somaTotal.length;
             const media = somaTotal.reduce((acc, val) => acc + val, 0) / somaTotal.length;
-
-            console.log("Updated somaTotal:", somaTotal);
-            console.log("New Exercise Average:", newExAvg);
-            console.log("Media:", media);
-            setCurrentAvg(newExAvg);
-            setAdd(soma);
-
-            if (media >= 179) {
+            if (media > 179) {
+                setAdd(c => c - soma);
                 stopInterval();
             }
+            setCurrentAvg(media);
+            setAdd(soma);
 
-            console.log("Resultado",somaTotal, "atr", attr)
             const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${somaTotal[0]}`;
             const seqAux = [...sequencia];
-            if (seqAux.length > 0 && seqAux[seqAux.length-1].includes(trainsOptions[attr])) {
-                seqAux[seqAux.length-1] = train;
-                setSequencia(seqAux);
+            if(somaTotal.length > 0){
+                if (seqAux.length > 0 && seqAux[seqAux.length-1].includes(trainsOptions[attr])) {
+                    seqAux[seqAux.length-1] = train;
+                    setSequencia(seqAux);
+                }
+                else {
+                    setSequencia([...sequencia, train]);
+                }
             }
-            else{
-                setSequencia([...sequencia, train]);
-            }
-
             return updatedValues;
         });
-
-
     };
 
     const handleAttributesOnDecrease = (attr) => {
@@ -183,10 +158,8 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
                     setSequencia(seqAuxSub);
                 }
             }
-
-            const newExAvg = subtracaoTotal.reduce((acc, val) => acc + val, 0) / subtracaoTotal.length;
-            console.log("New Exercise Average:", newExAvg);
-            setCurrentAvg(newExAvg+0.1);
+            const media = subtracaoTotal.reduce((acc, val) => acc + val, 0) / subtracaoTotal.length;
+            setCurrentAvg(media+0.9);
             setAdd(subtracao);
 
             return updatedValues;
@@ -195,11 +168,8 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
 
     const handleMouseDown = (attrIndex, move) => {
 
-        console.log("CUrrent index", attrIndex, currentIndex, counter)
-
         if (move === 'up' && avg[attrIndex] < 180){
             const aux = [...seqCount];
-
             if(attrIndex !== currentIndex[0]){
                 setPrev([...prev, attrIndex])
                 setCounter(0);
@@ -211,28 +181,22 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
             setCurrentIndex([attrIndex, move]);
             setCounter(c => c + 1);
 
-            handleAttributesOnUpdate(attrIndex); // Call once immediately
+            handleAttributesOnUpdate(attrIndex);
             intervalRef.current = setInterval(() => {
                 setCounter(c => c + 1);
                 handleAttributesOnUpdate(attrIndex)
             }, 120);
         }
         else{
-           // console.log(sequencia.length > 0, sequencia[sequencia.length-1].includes(trainsOptions[attrIndex]), seqCount[seqCount.length - 1] > 0, attrIndex === currentIndex[0], attrIndex,currentIndex[0] )
             if (move === 'down' && sequencia.length > 0 && sequencia[sequencia.length-1].includes(trainsOptions[attrIndex]) && seqCount[seqCount.length - 1] > 0 && attrIndex === currentIndex[0]){
-
                 setCurrentIndex([attrIndex, move]);
-                //setCounter(counterList[attrIndex]);
                 setCounter(c => c - 1);
 
-                handleAttributesOnDecrease(attrIndex); // Call once immediately
+                handleAttributesOnDecrease(attrIndex);
                 intervalRef.current = setInterval(() => {
                     setCounter(c => c - 1);
                     handleAttributesOnDecrease(attrIndex)
                 }, 120);
-            }
-            else{
-               console.log("Desbloquear ", seqCount)
             }
         }
     };
@@ -247,9 +211,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
     };
 
     useEffect(() => {
-        console.log("MEDIA ATUAL ", currentAvg, "GANHO ", add)
         if (currentAvg <= 80){
-
             setPacks(c => c + add / 5);
         }
         else if (80 < currentAvg && currentAvg <= 100){
@@ -266,7 +228,6 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
         }
     }, [add, currentAvg, setPacks]);
 
-
     useEffect(() => {
 
         const handleAverageChange = (updatedValues) => {
@@ -274,7 +235,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
             const aux = [...updatedValues];
             exercises.map((item, index) => {
                 let sum = 0;
-                if (index !== 12){
+                if (positionsList[0] === 'GK' || index !== 12){
                     for (let key in item){
                         sum += aux[item[key]];
                     }
@@ -292,7 +253,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
                 aux[test] = counter;
             }
 
-            /*if (JSON.stringify(aux) !== JSON.stringify(seqCount))*/ {
+            if (JSON.stringify(aux) !== JSON.stringify(seqCount)) {
                 setSeqCount(aux);
             }
         };
@@ -300,13 +261,11 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
 
         if (counter === 0 ) {
             stopInterval();
-            console.log("Interrompido")
         }
 
         handleSeqCountChange(test,counter);
 
         if (currentIndex[1] === 'down' && seqCount.length > 0 && seqCount[seqCount.length-1] === 0) {
-            console.log("Rodou apos")
             const sequenciaAux = [...sequencia];
             const seqAux = [...seqCount]
             const delCurrent = [...prev]
@@ -315,22 +274,28 @@ function Trainings({attrValues, setAttrValues, attrs, exercises, setPacks, count
 
             if (delCurrent.length > 0){
                 setCurrentIndex([delCurrent[delCurrent.length-1], 'down'])
-                setTest(delCurrent[delCurrent.length-1]);
+                setTest(seqCount.length-2);
             }
             else{
                 setCurrentIndex([])
             }
+
             setPrev(delCurrent);
             seqAux.pop();
             if (JSON.stringify(seqAux) !== JSON.stringify(seqCount)) {
                 setSeqCount(seqAux);
             }
             setSequencia(sequenciaAux);
-            setCounter(seqAux[seqAux.length-1]);
-        }
 
+            if(seqAux[seqAux.length-1] !== null && seqAux.length > 0 ){
+                setCounter(seqAux[seqAux.length-1])
+            }
+            else{
+                setCounter(0)
+            }
+        }
         // // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [attrValues, exercises, counter, prev, currentIndex, sequencia, setSequencia, test, avg]);
+    }, [attrValues, exercises, counter, prev, currentIndex, sequencia, setSequencia, test, avg, setCounter, seqCount, setSeqCount, positionsList, setCurrentIndex, setPrev]);
 
     return(<div className={TableStyles['train-container']}>
         <table className={TableStyles.table}>
@@ -388,10 +353,22 @@ Trainings.propTypes = {
     attrValues: PropTypes.array.isRequired,
     setAttrValues: PropTypes.func.isRequired,
     setPacks: PropTypes.func.isRequired,
+    packs: PropTypes.number.isRequired,
     originalAttributes: PropTypes.array.isRequired,
     sequencia: PropTypes.array.isRequired,
     setSequencia: PropTypes.func.isRequired,
     playerPositions: PropTypes.array.isRequired,
     counter: PropTypes.number.isRequired,
     setCounter: PropTypes.func.isRequired,
+    currentAvg: PropTypes.number.isRequired,
+    setCurrentAvg: PropTypes.func.isRequired,
+    add: PropTypes.number.isRequired,
+    setAdd: PropTypes.func.isRequired,
+    positionsList: PropTypes.array.isRequired,
+    seqCount: PropTypes.array.isRequired,
+    setSeqCount: PropTypes.func.isRequired,
+    currentIndex: PropTypes.array.isRequired,
+    setCurrentIndex: PropTypes.func.isRequired,
+    prev: PropTypes.array.isRequired,
+    setPrev: PropTypes.func.isRequired,
 }
