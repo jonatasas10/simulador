@@ -157,7 +157,7 @@ function Attributes(props) {
                     return positions.filter((position) => includesAny(position, ['DC', 'AMR', 'MC']));
                 }
                 else if(pos0 === 'DC' && pos1 === 'DMC' || pos0 === 'DMC' && pos1 === 'DC'){
-                    return positions.filter((position) => includesAny(position, ['DC', 'AML', 'MC']));
+                    return positions.filter((position) => includesAny(position, ['DL', 'DR', 'MC']));
                 }
                 else if(pos0 === 'DMC' && pos1 === 'MC' || pos0 === 'MC' && pos1 === 'DMC'){
                     return positions.filter((position) => includesAny(position, ['DC', 'AMC', 'ML', 'MR']));
