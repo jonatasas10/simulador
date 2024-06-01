@@ -12,17 +12,17 @@ function App() {
     const [counter, setCounter] = useState(0);
     const attributes = {
         0: 'corte',
-        1: 'marcaçao',
+        1: 'marcação',
         2: 'posicionamento',
-        3: 'cabecada',
+        3: 'cabeçada',
         4: 'coragem',
         5: 'passe',
         6: 'drible',
         7: 'cruzamento',
         8: 'chute',
-        9: 'finalizacao',
+        9: 'finalização',
         10: 'condicionamento',
-        11: 'forca',
+        11: 'força',
         12: 'agressividade',
         13: 'velocidade',
         14: 'criatividade'

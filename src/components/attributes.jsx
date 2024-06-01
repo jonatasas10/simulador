@@ -2,7 +2,7 @@ import {useEffect} from 'react'
 import TableStyles from './attributes.module.css'
 import PropTypes from "prop-types";
 function Attributes(props) {
-    const info = ['', 'Atual', 'Simulado'];
+    const info = ['Atributo', 'Atual', 'Simulado'];
     const attrValues = props.attrValues;
     const setAttrValues = props.setAttrValues;
     const originalAttributes = props.original;
