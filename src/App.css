@@ -1,0 +1,23 @@
+/* src/App.css */
+
+.table-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 15px;/* Adjusts spacing between the tables */
+}
+
+.table {
+  width: 45%; /* Adjust width as necessary */
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table th {
+  background-color: #f4f4f4;
+  text-align: left;
+}
