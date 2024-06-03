@@ -11,7 +11,7 @@ function Attributes(props) {
     const aux = props.attrs;
     const packs = props.packs;
     const setPacks = props.setPacks;
-    const setSequencia = props.setSequencia;
+    const setSequence = props.setSequence;
     const playerPositions = props.playerPositions;
     const setPlayerPositions = props.setPlayerPositions;
     const setCounter = props.setCounter;
@@ -19,13 +19,19 @@ function Attributes(props) {
     const setCurrentIndex = props.setCurrentIndex;
     const setPrev = props.setPrev;
     const setAdd = props.setAdd;
-    Object.keys(aux).forEach((key) => {
-        attributes.push(aux[key]);
-    });
-
     const positions = ["GK", "DL", "DR", "DC", "DMC", "ML", "MR", "MC", "AML", "AMR", "AMC", "ST"];
     const positionsList = props.positionsList;
     const setPositionsList = props.setPositionsList;
+    const currentPacks = props.currentPacks;
+    const setCurrentPacks = props.setCurrentPacks;
+    const originalPacks = props.originalPacks;
+    const setOriginalPacks = props.setOriginalPacks;
+    let speedChosen = props.speedChosen;
+    const speedChoice = props.speedChoice;
+    const setSpeedChoice = props.setSpeedChoice;
+    Object.keys(aux).forEach((key) => {
+        attributes.push(aux[key]);
+    });
 
     useEffect(() => {
         const positionsNumbers= {
@@ -88,12 +94,38 @@ function Attributes(props) {
         const attrs = [...originalAttributes];
         setPacks(0);
         setAttrValues(attrs);
-        setSequencia([]);
+        setSequence([]);
         setPlayerPositions(Array(15).fill(1));
         setCounter(0);
         setSeqCounter([]);
         setCurrentIndex([]);
         setPrev([]);
+        setAdd(0);
+        setCurrentPacks(originalPacks);
+    }
+
+    const handleSpeedChange = (e) => {
+        const value = Number(e.target.value);
+        setSpeedChoice(value);
+        switch (value) {
+            case 1:
+                speedChosen.current = 180;
+                break;
+            case 2:
+                speedChosen.current = 120;
+                break;
+            case 3:
+                speedChosen.current = 50;
+                break;
+            default: speedChosen.current = 120
+        }
+    }
+
+    const handleInputPacksChange = (e) => {
+        const value = e.target.value;
+        const intValue = value === '0' ? '' : Number(parseInt(value, 10));
+        setOriginalPacks(intValue);
+        setCurrentPacks(intValue);
         setAdd(0);
     }
 
@@ -248,7 +280,7 @@ function Attributes(props) {
                                 }}
                             />
                         </td>
-                        <td>{attrValues.at(attrIndex) !== null ? `${attrValues.at(attrIndex)}%`: ''}</td>
+                        <td>{attrValues.at(attrIndex) !== null ? `${attrValues.at(attrIndex)}%` : ''}</td>
                     </tr>
                 ))}
                 <tr>
@@ -263,12 +295,34 @@ function Attributes(props) {
                     </td>
                 </tr>
                 <tr>
-                    <td>Maletas</td>
-                    <td>{Math.abs(parseFloat(packs.toFixed(2)))}</td>
+                    <td>Maletas gastas</td>
+                    <td>
+                        <input className={TableStyles.inputTable}
+                               type="text"
+                               onChange={(e) => handleInputPacksChange(e)}
+                               onClick={event => {
+                                   event.target.value = ''
+                               }}
+                               value={originalPacks !== null ? originalPacks : ''}
+                        />
+                    </td>
+                    <td>{currentPacks !== null && originalPacks > 0 ? currentPacks.toFixed(0) : null}</td>
+                </tr>
+                <tr className={TableStyles.attrWhite}>
+                    <td>Maletas usadas</td>
+                    <td>{Math.abs(parseFloat(packs.toFixed(0)))}</td>
                 </tr>
                 </tbody>
             </table>
-            <button className={TableStyles.buttonReset} onClick={resetAttributes}>Resetar simulação</button>
+            <button className={TableStyles.inputSpeed} onClick={resetAttributes}>Resetar simulação</button>
+            <select value={speedChoice} onChange={(e) => handleSpeedChange(e)}
+                    className={TableStyles.buttonReset}
+            >
+                <option value="">Velocidade</option>
+                <option value="1">Lento</option>
+                <option value="2">Normal</option>
+                <option value="3">Rápido</option>
+            </select>
         </div>
     );
 }
@@ -283,7 +337,7 @@ Attributes.propTypes = {
     setOriginal: PropTypes.func.isRequired,
     packs: PropTypes.number.isRequired,
     setPacks: PropTypes.func.isRequired,
-    setSequencia: PropTypes.func.isRequired,
+    setSequence: PropTypes.func.isRequired,
     playerPositions: PropTypes.array.isRequired,
     setPlayerPositions: PropTypes.func.isRequired,
     setCounter: PropTypes.func.isRequired,
@@ -293,4 +347,11 @@ Attributes.propTypes = {
     setCurrentIndex: PropTypes.func.isRequired,
     setPrev: PropTypes.func.isRequired,
     setAdd: PropTypes.func.isRequired,
+    setCurrentPacks: PropTypes.func.isRequired,
+    currentPacks: PropTypes.number,
+    originalPacks: PropTypes.number,
+    setOriginalPacks: PropTypes.func.isRequired,
+    speedChosen: PropTypes.object,
+    speedChoice: PropTypes.number.isRequired,
+    setSpeedChoice: PropTypes.func.isRequired,
 }

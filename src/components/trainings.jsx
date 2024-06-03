@@ -2,11 +2,12 @@ import {useEffect, useRef, useState} from "react";
 import TableStyles from "./trainings.module.css"
 import PropTypes from "prop-types";
 
-function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counter, setCounter, sequencia,
-                    setSequencia, playerPositions, currentAvg, setCurrentAvg, add, setAdd, positionsList,
-                    seqCount, setSeqCount, currentIndex, setCurrentIndex, prev, setPrev}) {
+function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counter, setCounter, sequence,
+                    setSequence, playerPositions, currentAvg, setCurrentAvg, add, setAdd, positionsList,
+                    seqCount, setSeqCount, currentIndex, setCurrentIndex, prev, setPrev,
+                    setCurrentPacks, originalPacks, speedChosen}) {
 
-    const [test, setTest] = useState(0);
+    const [removeIndex, setRemoveIndex] = useState(0);
     const intervalRef = useRef(null);
     const trainsOptions = [
         'passe, vá, dispare',
@@ -71,8 +72,8 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
     };
 
     const handleAttributesOnUpdate = (attr) => {
-        let soma = 0;
-        let somaTotal = [];
+        let sum = 0;
+        let sumTotal = [];
 
         setAttrValues((newValues) => {
             const updateAttr = exercises[attr];
@@ -83,33 +84,32 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                 if (updateAttr.includes(index) && avg[attr] < 179) {
                     if (fim) {
                         item = item < 340 ? item + 1 : item;
-                        soma += 1;
+                        sum += 1;
                     } else {
                         item = item < 340 ? item + position[index] : item;
-                        soma += position[index];
+                        sum += position[index];
                     }
-                    somaTotal.push(item);
+                    sumTotal.push(item);
                 }
                 return item;
             });
 
-            const media = somaTotal.reduce((acc, val) => acc + val, 0) / somaTotal.length;
+            const media = (sumTotal.reduce((acc, val) => acc + val, 0) / sumTotal.length);
             if (media > 179) {
-                setAdd(c => c - soma);
+                setAdd(c => c - sum);
                 stopInterval();
             }
             setCurrentAvg(media);
-            setAdd(soma);
-
-            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${somaTotal[0]}`;
-            const seqAux = [...sequencia];
-            if(somaTotal.length > 0){
+            setAdd(sum);
+            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${sumTotal[0]}`;
+            const seqAux = [...sequence];
+            if(sumTotal.length > 0){
                 if (seqAux.length > 0 && seqAux[seqAux.length-1].includes(trainsOptions[attr])) {
                     seqAux[seqAux.length-1] = train;
-                    setSequencia(seqAux);
+                    setSequence(seqAux);
                 }
                 else {
-                    setSequencia([...sequencia, train]);
+                    setSequence([...sequence, train]);
                 }
             }
             return updatedValues;
@@ -117,9 +117,9 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
     };
 
     const handleAttributesOnDecrease = (attr) => {
-        let subtracao = 0;
-        let subtracaoTotal = [];
-        const seqAuxSub = [...sequencia];
+        let sub = 0;
+        let subTotal = [];
+        const seqAuxSub = [...sequence];
 
         if (seqAuxSub.length > 0 && !seqAuxSub[seqAuxSub.length-1].includes(trainsOptions[attr]) ){
             return;
@@ -134,33 +134,34 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                 if (updateAttr.includes(index)) {
                     if (fim) {
                         item = item < 340 ? item - 1 : item;
-                        subtracao = item < 340 ? subtracao - 1 : subtracao;
+                        sub = item < 340 ? sub - 1 : sub;
                     } else {
                         item = item < 340 ? item - position[index] : item;
-                        subtracao = subtracao - position[index];
+                        sub = sub - position[index];
                     }
-                    subtracaoTotal.push(item);
+                    subTotal.push(item);
                 }
                 return item;
             });
+            const media = (subTotal.reduce((acc, val) => acc + val, 0) / subTotal.length);
+            setCurrentAvg(media - sub/exercises[attr].length);
+            setAdd(sub);
 
-            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${subtracaoTotal[0]}`;
+            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${subTotal[0]}}`;
 
-            if (subtracaoTotal.length > 0) {
+            if (subTotal.length > 0) {
                 if (seqAuxSub.length > 0 && seqAuxSub[seqAuxSub.length-1].includes(trainsOptions[attr])) {
                     seqAuxSub[seqAuxSub.length-1] = train;
-                    setSequencia(seqAuxSub);
+                    setSequence(seqAuxSub);
                 } else {
-                    setSequencia([...sequencia, train]);
+                    setSequence([...sequence, train]);
                 }
             } else {
                 if (seqAuxSub.length > 0 && seqAuxSub[seqAuxSub.length-1].includes(trainsOptions[attr])) {
-                    setSequencia(seqAuxSub);
+                    setSequence(seqAuxSub);
                 }
             }
-            const media = subtracaoTotal.reduce((acc, val) => acc + val, 0) / subtracaoTotal.length;
-            setCurrentAvg(media+0.9);
-            setAdd(subtracao);
+
 
             return updatedValues;
         });
@@ -173,7 +174,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             if(attrIndex !== currentIndex[0]){
                 setPrev([...prev, attrIndex])
                 setCounter(0);
-                setTest(aux.length);
+                setRemoveIndex(aux.length);
                 aux.push(0);
             }
             setSeqCount(aux);
@@ -185,10 +186,10 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             intervalRef.current = setInterval(() => {
                 setCounter(c => c + 1);
                 handleAttributesOnUpdate(attrIndex)
-            }, 120);
+            }, speedChosen);
         }
         else{
-            if (move === 'down' && sequencia.length > 0 && sequencia[sequencia.length-1].includes(trainsOptions[attrIndex]) && seqCount[seqCount.length - 1] > 0 && attrIndex === currentIndex[0]){
+            if (move === 'down' && sequence.length > 0 && sequence[sequence.length-1].includes(trainsOptions[attrIndex]) && seqCount[seqCount.length - 1] > 0 && attrIndex === currentIndex[0]){
                 setCurrentIndex([attrIndex, move]);
                 setCounter(c => c - 1);
 
@@ -196,7 +197,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                 intervalRef.current = setInterval(() => {
                     setCounter(c => c - 1);
                     handleAttributesOnDecrease(attrIndex)
-                }, 120);
+                }, speedChosen);
             }
         }
     };
@@ -211,25 +212,30 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
     };
 
     useEffect(() => {
+        let cost = 0;
         if (currentAvg <= 80){
-            setPacks(c => c + add / 5);
+            cost = add / 5;
+            setPacks(c => c + cost);
         }
         else if (80 < currentAvg && currentAvg <= 100){
-            setPacks(c => c + add / 4);
+            cost = add / 4;
+            setPacks(c => c + cost);
         }
         else if (100 < currentAvg && currentAvg <= 120){
-            setPacks(c => c + add / 3);
+            cost = add / 3;
+            setPacks(c => c + cost);
         }
         else if (120 < currentAvg && currentAvg <= 140){
-            setPacks(c => c + add / 2);
+            cost = add / 2;
+            setPacks(c => c + cost);
         }
         else{
-            setPacks(c => c + add);
+            cost = add
+            setPacks(c => c + cost);
         }
-    }, [add, currentAvg, setPacks]);
+    }, [add, currentAvg, setPacks, originalPacks, setCurrentPacks]);
 
     useEffect(() => {
-
         const handleAverageChange = (updatedValues) => {
             const newVal = [...avg];
             const aux = [...updatedValues];
@@ -247,10 +253,10 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                 setAvg(newVal);
             }
         };
-        const handleSeqCountChange = (test, counter) => {
+        const handleSeqCountChange = (removeIndex, counter) => {
             const aux = [...seqCount];
             if (aux.length > 0) {
-                aux[test] = counter;
+                aux[removeIndex] = counter;
             }
 
             if (JSON.stringify(aux) !== JSON.stringify(seqCount)) {
@@ -263,18 +269,18 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             stopInterval();
         }
 
-        handleSeqCountChange(test,counter);
+        handleSeqCountChange(removeIndex,counter);
 
         if (currentIndex[1] === 'down' && seqCount.length > 0 && seqCount[seqCount.length-1] === 0) {
-            const sequenciaAux = [...sequencia];
+            const sequenceAux = [...sequence];
             const seqAux = [...seqCount]
             const delCurrent = [...prev]
-            sequenciaAux.pop()
+            sequenceAux.pop()
             delCurrent.pop()
 
             if (delCurrent.length > 0){
                 setCurrentIndex([delCurrent[delCurrent.length-1], 'down'])
-                setTest(seqCount.length-2);
+                setRemoveIndex(seqCount.length-2);
             }
             else{
                 setCurrentIndex([])
@@ -285,7 +291,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             if (JSON.stringify(seqAux) !== JSON.stringify(seqCount)) {
                 setSeqCount(seqAux);
             }
-            setSequencia(sequenciaAux);
+            setSequence(sequenceAux);
 
             if(seqAux[seqAux.length-1] !== null && seqAux.length > 0 ){
                 setCounter(seqAux[seqAux.length-1])
@@ -295,54 +301,56 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             }
         }
         // // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [attrValues, exercises, counter, prev, currentIndex, sequencia, setSequencia, test, avg, setCounter, seqCount, setSeqCount, positionsList, setCurrentIndex, setPrev]);
+    }, [attrValues, exercises, counter, prev, currentIndex, sequence, setSequence, removeIndex, avg, setCounter, seqCount, setSeqCount, positionsList, setCurrentIndex, setPrev]);
 
-    return(<div className={TableStyles['train-container']}>
-        <table className={TableStyles.table}>
-            <thead>
-            <tr>
-                {info.map((attribute, index) => (
-                    <th key={index}>{attribute}</th>
-                ))}
-            </tr>
-            </thead>
-            <tbody>
-            {trainsOptions.map((attribute, attrIndex) => (
-                <tr key={attrIndex}>
-                    {brancos[attrIndex].length > 0 || cinzas[attrIndex].length > 0?
-                        <>
-                            <td>{attribute.charAt(0).toUpperCase() + attribute.slice(1)}</td>
-                            <td>{brancos[attrIndex]}</td>
-                            <td>{cinzas[attrIndex]}</td>
-                            <td>{avg[attrIndex]}%</td>
-                            <td>
-                                <div className={TableStyles.upDownBtn}>
-                                    <button onMouseDown={() => handleMouseDown(attrIndex, 'up')}
-                                            onMouseUp={handleMouseUp}
-                                            onMouseLeave={handleMouseLeave}
-                                    >
-                                        {<i className="fa-solid fa-arrow-up"></i>}
-                                    </button>
-                                    <button onMouseDown={() => handleMouseDown(attrIndex, 'down')}
-                                            onMouseUp={handleMouseUp}
-                                            onMouseLeave={handleMouseLeave}
-                                    >
-                                        {<i className="fa-solid fa-arrow-down"></i>}
-                                    </button>
-                                </div>
-                            </td>
-                        </>
-                        : null
-                    }
+    return(
+        <div className={TableStyles['train-container']}>
+            <table className={TableStyles.table}>
+                <thead>
+                <tr>
+                    {info.map((attribute, index) => (
+                        <th key={index}>{attribute}</th>
+                    ))}
                 </tr>
-            ))}
-            </tbody>
-        </table>
-        <ul className={TableStyles.exercises}>
-            {sequencia.length > 0 && <h4>Sequência de treinos</h4>}
-            {sequencia.map((item, index) => (<li key={index}>{`${index + 1}) ${item}`}</li>))}
-        </ul>
-    </div>);
+                </thead>
+                <tbody>
+                {trainsOptions.map((attribute, attrIndex) => (
+                    <tr key={attrIndex}>
+                        {brancos[attrIndex].length > 0 || cinzas[attrIndex].length > 0?
+                            <>
+                                <td>{attribute.charAt(0).toUpperCase() + attribute.slice(1)}</td>
+                                <td>{brancos[attrIndex]}</td>
+                                <td>{cinzas[attrIndex]}</td>
+                                <td>{avg[attrIndex]}%</td>
+                                <td>
+                                    <div className={TableStyles.upDownBtn}>
+                                        <button onMouseDown={() => handleMouseDown(attrIndex, 'up')}
+                                                onMouseUp={handleMouseUp}
+                                                onMouseLeave={handleMouseLeave}
+                                        >
+                                            {<i className="fa-solid fa-arrow-up"></i>}
+                                        </button>
+                                        <button onMouseDown={() => handleMouseDown(attrIndex, 'down')}
+                                                onMouseUp={handleMouseUp}
+                                                onMouseLeave={handleMouseLeave}
+                                        >
+                                            {<i className="fa-solid fa-arrow-down"></i>}
+                                        </button>
+                                    </div>
+                                </td>
+                            </>
+                            : null
+                        }
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <ul className={TableStyles.exercises}>
+                {sequence.length > 0 && <h4>Sequência de treinos</h4>}
+                {sequence.map((item, index) => (<li key={index}>{`${index + 1}) ${item}`}</li>))}
+            </ul>
+
+        </div>);
 }
 
 export default Trainings;
@@ -355,8 +363,8 @@ Trainings.propTypes = {
     setPacks: PropTypes.func.isRequired,
     packs: PropTypes.number.isRequired,
     originalAttributes: PropTypes.array.isRequired,
-    sequencia: PropTypes.array.isRequired,
-    setSequencia: PropTypes.func.isRequired,
+    sequence: PropTypes.array.isRequired,
+    setSequence: PropTypes.func.isRequired,
     playerPositions: PropTypes.array.isRequired,
     counter: PropTypes.number.isRequired,
     setCounter: PropTypes.func.isRequired,
@@ -371,4 +379,9 @@ Trainings.propTypes = {
     setCurrentIndex: PropTypes.func.isRequired,
     prev: PropTypes.array.isRequired,
     setPrev: PropTypes.func.isRequired,
+    setCurrentPacks: PropTypes.func.isRequired,
+    currentPacks: PropTypes.number,
+    originalPacks: PropTypes.number,
+    setOriginalPacks: PropTypes.func.isRequired,
+    speedChosen: PropTypes.number,
 }

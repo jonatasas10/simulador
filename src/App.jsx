@@ -1,11 +1,11 @@
 import Attributes from "./components/attributes.jsx";
 import Trainings from "./components/trainings.jsx";
 import './App.css'
-import {useState} from "react";
+import {useState, useRef, useEffect} from "react";
 
 function App() {
     const [attrValues, setAttrValues] = useState(Array(15).fill(null));
-    const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(null));
+    const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(100));
     const [seqCount, setSeqCount] = useState([]);
     const [prev, setPrev] = useState([]);
     const [reset, setReset] = useState(true);
@@ -46,12 +46,16 @@ function App() {
     };
     const exercises = []
     const [packs, setPacks] = useState(0);
-    const [sequencia, setSequencia] = useState([]);
+    const [currentPacks, setCurrentPacks] = useState(0);
+    const [originalPacks, setOriginalPacks] = useState(0);
+    const [sequence, setSequence] = useState([]);
     const [positionsList, setPositionsList] = useState([]);
     const [playerPositions, setPlayerPositions] = useState(Array(15).fill(1));
     const [currentAvg, setCurrentAvg] = useState(0);
     const [add, setAdd] = useState(0);
     const [currentIndex, setCurrentIndex] = useState([]);
+    const [speedChoice, setSpeedChoice] = useState(0);
+    let speedChosen = useRef(120);
     const trainsAttrs = {
         // Posição 1 = Jogador de linha; Posição 2 = GK
         1: [[5, 8, 13], [2, 13]],
@@ -89,6 +93,10 @@ function App() {
         positionsList[0] !== 'GK' ? exercises.push(trainsAttrs[i][0]) : exercises.push(trainsAttrs[i][1]);
     }
 
+    useEffect(() => {
+        setCurrentPacks(originalPacks - packs);
+    }, [originalPacks, packs]);
+
     return (
         <>
             <h1 style={{textAlign: "center"}}>Simulador</h1>
@@ -102,7 +110,7 @@ function App() {
                             setReset={setReset}
                             packs={packs}
                             setPacks={setPacks}
-                            setSequencia={setSequencia}
+                            setSequence={setSequence}
                             playerPositions={playerPositions}
                             setPlayerPositions={setPlayerPositions}
                             counter={counter}
@@ -113,6 +121,14 @@ function App() {
                             setCurrentIndex={setCurrentIndex}
                             setPrev={setPrev}
                             setAdd={setAdd}
+                            originalPacks={originalPacks}
+                            setOriginalPacks={setOriginalPacks}
+                            currentPacks={currentPacks}
+                            setCurrentPacks={setCurrentPacks}
+                            speedChosen={speedChosen}
+                            speedChoice={speedChoice}
+                            setSpeedChoice={setSpeedChoice}
+
                 />
                 <Trainings exercises={exercises}
                            attrs={positionsList[0] !== 'GK' ? attributes : attributesGK}
@@ -120,8 +136,8 @@ function App() {
                            setAttrValues={setAttrValues}
                            setPacks={setPacks}
                            originalAttributes={originalAttributes}
-                           sequencia={sequencia}
-                           setSequencia={setSequencia}
+                           sequence={sequence}
+                           setSequence={setSequence}
                            packs={packs}
                            playerPositions={playerPositions}
                            counter={counter}
@@ -137,6 +153,11 @@ function App() {
                            setCurrentIndex={setCurrentIndex}
                            prev={prev}
                            setPrev={setPrev}
+                           currentPacks={currentPacks}
+                           setCurrentPacks={setCurrentPacks}
+                           originalPacks={originalPacks}
+                           setOriginalPacks={setOriginalPacks}
+                           speedChosen={speedChosen.current}
                 />
             </div>
         </>
