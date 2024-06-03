@@ -314,9 +314,9 @@ function Attributes(props) {
                 </tr>
                 </tbody>
             </table>
-            <button className={TableStyles.inputSpeed} onClick={resetAttributes}>Resetar simulação</button>
+            <button className={TableStyles.buttonReset} onClick={resetAttributes}>Resetar simulação</button>
             <select value={speedChoice} onChange={(e) => handleSpeedChange(e)}
-                    className={TableStyles.buttonReset}
+                    className={TableStyles.inputSpeed}
             >
                 <option value="">Velocidade</option>
                 <option value="1">Lento</option>
