@@ -5,7 +5,7 @@ import {useState, useRef, useEffect} from "react";
 
 function App() {
     const [attrValues, setAttrValues] = useState(Array(15).fill(null));
-    const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(100));
+    const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(null));
     const [seqCount, setSeqCount] = useState([]);
     const [prev, setPrev] = useState([]);
     const [reset, setReset] = useState(true);

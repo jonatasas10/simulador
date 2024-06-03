@@ -147,7 +147,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             setCurrentAvg(media - sub/exercises[attr].length);
             setAdd(sub);
 
-            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${subTotal[0]}}`;
+            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${subTotal[0]}`;
 
             if (subTotal.length > 0) {
                 if (seqAuxSub.length > 0 && seqAuxSub[seqAuxSub.length-1].includes(trainsOptions[attr])) {
