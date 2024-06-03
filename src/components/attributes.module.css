@@ -42,8 +42,9 @@
 }
 
 .inputTable{
-    padding: 1px 1px; /* Add padding inside the input for better click area */
+    padding: 0px; /* Add padding inside the input for better click area */
     width: 70px;
+    height: 25px;
     display: block;
     border: none;
     box-sizing: border-box;
