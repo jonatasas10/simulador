@@ -69,11 +69,19 @@ function Attributes(props) {
         setPositionsList(currentPositions);
     }
 
-    const handleInputChange = (e, index) =>{
+    const handleInputChange = (e, index) => {
         const newVal = [...originalAttributes];
         let value = e.target.value;
-        value = value.replace('%', '');
-        newVal[index] = Number(value);
+        value = value.replace('%', '').trim();
+
+        const validPartialNumber = /^-?\d*\.?\d*$/;
+
+        if (validPartialNumber.test(value)) {
+            newVal[index] = value;
+        } else {
+            newVal[index] = '';
+        }
+
         setAttrValues(newVal);
         setOriginal(newVal);
     };
@@ -88,8 +96,30 @@ function Attributes(props) {
                     nextInput.focus();
                 }
             }
+            else{
+                const finalizedValues = originalAttributes.map(attr => {
+                    if (typeof attr === 'string' && /^-?\d+(\.\d+)?$/.test(attr.trim())) {
+                        return parseFloat(attr.trim());
+                    }
+                    return attr;
+                });
+                setAttrValues(finalizedValues);
+                setOriginal(finalizedValues);
+            }
         }
     }
+    const playerAvg = (arr) => {
+        const sum = (arr.reduce((a, b) => {
+            a = parseInt(a);
+            b = parseInt(b);
+            return a + b;
+        }));
+        if(isNaN(sum)){
+            return "";
+        }
+        return (sum / 15).toFixed(0);
+    }
+
     const resetAttributes = () => {
         const attrs = [...originalAttributes];
         setPacks(0);
@@ -285,13 +315,9 @@ function Attributes(props) {
                 ))}
                 <tr>
                     <td>Média do jogador</td>
-                    <td>{((originalAttributes.reduce((a, b) => {
-                        return a + b
-                    })) / 15).toFixed(0)}%
+                    <td>{playerAvg(originalAttributes)}%
                     </td>
-                    <td>{((attrValues.reduce((a, b) => {
-                        return a + b
-                    })) / 15).toFixed(0)}%
+                    <td>{playerAvg(attrValues)}%
                     </td>
                 </tr>
                 <tr>

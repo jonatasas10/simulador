@@ -243,11 +243,12 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                 let sum = 0;
                 if (positionsList[0] === 'GK' || index !== 12){
                     for (let key in item){
-                        sum += aux[item[key]];
+                        sum += parseInt(aux[item[key]]);
                     }
                 }
                 const avgExercise = sum / item.length;
-                newVal[index] = parseFloat(avgExercise.toFixed(0));
+                const newAvg = parseFloat(avgExercise.toFixed(0))
+                newVal[index] = !isNaN(newAvg) ? newAvg : "";
             })
             if (JSON.stringify(newVal) !== JSON.stringify(avg)) {
                 setAvg(newVal);
