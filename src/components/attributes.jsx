@@ -64,7 +64,14 @@ function Attributes(props) {
 
     const handlePositionsChange = (e, index) => {
         const chose = e.target.value;
-        const currentPositions = [...positionsList];
+        let currentPositions =  [...positionsList];
+        if(index === 0 && positionsList.length > 1){
+            currentPositions = [];
+
+        }
+        else if(index === 1 && positionsList.length > 2 && chose !== positionsList[index]){
+            currentPositions.pop();
+        }
         chose !== '' ? currentPositions[index] = chose : currentPositions.pop();
         setPositionsList(currentPositions);
     }
@@ -165,6 +172,7 @@ function Attributes(props) {
         const includesAny = (position, substrings) =>
             substrings.some((substring) => position === substring);
         switch (index) {
+
             case 1:
                 if(pos0 === 'GK' || positionsList.length === 0) {
                     return [];
@@ -264,18 +272,18 @@ function Attributes(props) {
             <div className={TableStyles.buttons}>
                 <select value={positionsList[0]} onChange={(e) => handlePositionsChange(e, 0)}>
                     <option value="">Posição 1</option>
-                    {positions.map((position, index) => (
+                    { positions.map((position, index) => (
                         <option key={index} value={position}>{position}</option>
                     ))}
                 </select>
-                <select value={positionsList[1]} onChange={(e) => handlePositionsChange(e, 1)}>
+                <select value={positionsList.length > 1 ? positionsList[1] : ""} onChange={(e) => handlePositionsChange(e, 1)}>
                     <option value={""}>Posição 2</option>
                     {filterPositions(1).map((position, index) => (
                             <option key={index} value={position}>{position}</option>
                         )
                     )}
                 </select>
-                <select value={positionsList[2]} onChange={(e) => handlePositionsChange(e, 2)}>
+                <select value={positionsList.length > 2 ? positionsList[2] : ""} onChange={(e) => handlePositionsChange(e, 2)}>
                     <option value="">Posição 3</option>
                     {filterPositions(2).map((position, index) => (
                             <option key={index} value={position}>{position}</option>
