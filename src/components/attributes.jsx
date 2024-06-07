@@ -1,6 +1,6 @@
 import {useEffect} from 'react'
 import TableStyles from './attributes.module.css'
-import PropTypes from "prop-types";
+import PropTypes, {number} from "prop-types";
 function Attributes(props) {
     const info = ['Atributo', 'Atual', 'Simulado'];
     const attrValues = props.attrValues;
@@ -80,11 +80,13 @@ function Attributes(props) {
         const newVal = [...originalAttributes];
         let value = e.target.value;
         value = value.replace('%', '').trim();
-
         const validPartialNumber = /^-?\d*\.?\d*$/;
 
-        if (validPartialNumber.test(value)) {
-            newVal[index] = value;
+        if(value === '-'){
+            newVal[index] = '-';
+        }
+        else if (validPartialNumber.test(value)) {
+            newVal[index] = parseInt(value);
         } else {
             newVal[index] = '';
         }
@@ -103,22 +105,12 @@ function Attributes(props) {
                     nextInput.focus();
                 }
             }
-            else{
-                const finalizedValues = originalAttributes.map(attr => {
-                    if (typeof attr === 'string' && /^-?\d+(\.\d+)?$/.test(attr.trim())) {
-                        return parseFloat(attr.trim());
-                    }
-                    return attr;
-                });
-                setAttrValues(finalizedValues);
-                setOriginal(finalizedValues);
-            }
         }
     }
     const playerAvg = (arr) => {
         const sum = (arr.reduce((a, b) => {
-            a = parseInt(a);
-            b = parseInt(b);
+            /*a = parseInt(a);
+            b = parseInt(b);*/
             return a + b;
         }));
         if(isNaN(sum)){
@@ -323,9 +315,17 @@ function Attributes(props) {
                 ))}
                 <tr>
                     <td>Média do jogador</td>
-                    <td>{playerAvg(originalAttributes)}%
+                    <td>{((originalAttributes.reduce((a, b) => {
+                        a = (/^-?\d+(\.\d*)?$/).test(a) ? a : 0;
+                        b = (/^-?\d+(\.\d*)?$/).test(b) ? b : 0;
+                        return a + b
+                    })) / 15).toFixed(0)}%
                     </td>
-                    <td>{playerAvg(attrValues)}%
+                    <td>{((attrValues.reduce((a, b) => {
+                        a = (/^-?\d+(\.\d*)?$/).test(a) ? a : 0;
+                        b = (/^-?\d+(\.\d*)?$/).test(b) ? b : 0;
+                        return a + b
+                    })) / 15).toFixed(0)}%
                     </td>
                 </tr>
                 <tr>
