@@ -104,7 +104,8 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${sumTotal[0]}`;
             const seqAux = [...sequence];
             if(sumTotal.length > 0){
-                if (seqAux.length > 0 && seqAux[seqAux.length-1].includes(trainsOptions[attr])) {
+                const equalIndex = seqAux.indexOf("=");
+                if (seqAux.length > 0 && seqAux[seqAux.length-1].substring(0, equalIndex).includes(trainsOptions[attr])) {
                     seqAux[seqAux.length-1] = train;
                     setSequence(seqAux);
                 }
