@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counter, setCounter, sequence,
                     setSequence, playerPositions, currentAvg, setCurrentAvg, add, setAdd, positionsList,
                     seqCount, setSeqCount, currentIndex, setCurrentIndex, prev, setPrev,
-                    setCurrentPacks, originalPacks, speedChosen}) {
+                    setCurrentPacks, originalPacks, speedChosen, colorAttr}) {
 
     const [removeIndex, setRemoveIndex] = useState(0);
     const intervalRef = useRef(null);
@@ -71,6 +71,25 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
         }
     };
 
+    const attrChosen = (attr) => {
+        let whiteAttr = attrs[exercises[attr][0]];
+        let whiteAttrIndex = 0;
+        let inicio = true;
+        for (let i = 0; i < exercises[attr].length; i++) {
+            if (exercises[attr][i] === colorAttr){
+                whiteAttr = attrs[exercises[attr][i]];
+                whiteAttrIndex = i;
+                return [whiteAttr, whiteAttrIndex];
+            }
+            if (position[exercises[attr][i]] === 2 && inicio){
+                inicio = false;
+                whiteAttr = attrs[exercises[attr][i]];
+                whiteAttrIndex = i;
+            }
+        }
+        return [whiteAttr, whiteAttrIndex];
+    }
+
     const handleAttributesOnUpdate = (attr) => {
         let sum = 0;
         let sumTotal = [];
@@ -81,13 +100,13 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             const fim = trainingCondition(attr);
 
             const updatedValues = aux.map((item, index) => {
-                if (updateAttr.includes(index) && avg[attr] < 179) {
+                if (updateAttr.includes(index) && avg[attr] <= 180) {
                     if (fim) {
-                        item = item < 340 ? item + 1 : item;
+                        item = item < 400 ? item + 1 : item;
                         sum += 1;
                     } else {
-                        item = item < 340 ? item + position[index] : item;
-                        sum += position[index];
+                        item = item < 400 ? item + position[index] / 2 : item;
+                        sum += position[index] / 2;
                     }
                     sumTotal.push(item);
                 }
@@ -95,13 +114,14 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             });
 
             const media = (sumTotal.reduce((acc, val) => acc + val, 0) / sumTotal.length);
-            if (media > 179) {
+            if (media >= 180) {
                 setAdd(c => c - sum);
                 stopInterval();
             }
             setCurrentAvg(media);
             setAdd(sum);
-            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${sumTotal[0]}`;
+            let [whiteAttr, whiteAttrIndex] = attrChosen(attr);
+            const train = `${trainsOptions[attr]} = ${whiteAttr} = ${Math.floor(sumTotal[whiteAttrIndex]).toFixed(0)}`;
             const seqAux = [...sequence];
             if(sumTotal.length > 0){
                 if (seqAux.length > 0 &&
@@ -134,11 +154,11 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             const updatedValues = aux.map((item, index) => {
                 if (updateAttr.includes(index)) {
                     if (fim) {
-                        item = item < 340 ? item - 1 : item;
-                        sub = item < 340 ? sub - 1 : sub;
+                        item = item < 400 ? item - 1 : item;
+                        sub = item < 400 ? sub - 1 : sub;
                     } else {
-                        item = item < 340 ? item - position[index] : item;
-                        sub = sub - position[index];
+                        item = item < 400 ? item - position[index] / 2 : item;
+                        sub = sub - position[index] / 2;
                     }
                     subTotal.push(item);
                 }
@@ -148,7 +168,9 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             setCurrentAvg(media - sub/exercises[attr].length);
             setAdd(sub);
 
-            const train = `${trainsOptions[attr]} = ${attrs[exercises[attr][0]]} = ${subTotal[0]}`;
+            let [whiteAttr, whiteAttrIndex] = attrChosen(attr);
+            //const train = `${trainsOptions[attr]} = ${whiteAttr} = ${subTotal[whiteAttrIndex].toFixed(0)}`;
+            const train = `${trainsOptions[attr]} = ${whiteAttr} = ${Math.floor(subTotal[whiteAttrIndex]).toFixed(0)}`;
 
             if (subTotal.length > 0) {
                 if (seqAuxSub.length > 0 && seqAuxSub[seqAuxSub.length-1].includes(trainsOptions[attr])) {
@@ -386,4 +408,5 @@ Trainings.propTypes = {
     originalPacks: PropTypes.number,
     setOriginalPacks: PropTypes.func.isRequired,
     speedChosen: PropTypes.number,
+    colorAttr: PropTypes.number,
 }

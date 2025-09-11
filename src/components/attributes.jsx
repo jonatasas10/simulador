@@ -1,6 +1,6 @@
 import {useEffect} from 'react'
 import TableStyles from './attributes.module.css'
-import PropTypes, {number} from "prop-types";
+import PropTypes from "prop-types";
 function Attributes(props) {
     const info = ['Atributo', 'Atual', 'Simulado'];
     const attrValues = props.attrValues;
@@ -29,6 +29,8 @@ function Attributes(props) {
     let speedChosen = props.speedChosen;
     const speedChoice = props.speedChoice;
     const setSpeedChoice = props.setSpeedChoice;
+    const colorAttr = props.colorAttr;
+    const setColorAttr = props.setColorAttr;
     Object.keys(aux).forEach((key) => {
         attributes.push(aux[key]);
     });
@@ -258,7 +260,7 @@ function Attributes(props) {
                 return positions;
         }
     };
-
+    //const [colorAttr, setColorAttr] = useState(-1);
     return(
         <div>
             <div className={TableStyles.buttons}>
@@ -296,7 +298,14 @@ function Attributes(props) {
                 {attributes.map((attribute, attrIndex) => (
                     <tr className={playerPositions[attrIndex] === 1 ? TableStyles.attrColorGray : TableStyles.attrWhite}
                         key={attrIndex}>
-                        <td>{attribute.charAt(0).toUpperCase() + attribute.slice(1)}</td>
+                        <td onClick={(event) => {
+                            //console.log("CLICKED", event.target, attribute);
+                            setColorAttr(attrIndex !== colorAttr ? attrIndex : -1);
+                            }
+                        }
+                            style={attrIndex === colorAttr ? {color: 'darkcyan', cursor: 'pointer', fontWeight: 700} : {cursor: 'pointer'}}
+
+                        >{attribute.charAt(0).toUpperCase() + attribute.slice(1)}</td>
                         <td>
                             <input
                                 className={TableStyles.inputTable}
@@ -310,7 +319,7 @@ function Attributes(props) {
                                 }}
                             />
                         </td>
-                        <td>{attrValues.at(attrIndex) !== null ? `${attrValues.at(attrIndex)}%` : ''}</td>
+                        <td>{attrValues.at(attrIndex) !== null ? `${Math.floor(attrValues.at(attrIndex)).toFixed(0)}%` : ''}</td>
                     </tr>
                 ))}
                 <tr>
@@ -344,7 +353,7 @@ function Attributes(props) {
                 </tr>
                 <tr className={TableStyles.attrWhite}>
                     <td>Maletas usadas</td>
-                    <td>{Math.abs(parseFloat(packs.toFixed(0)))}</td>
+                    <td>{parseFloat(packs.toFixed(0))}</td>
                 </tr>
                 </tbody>
             </table>
@@ -388,4 +397,6 @@ Attributes.propTypes = {
     speedChosen: PropTypes.object,
     speedChoice: PropTypes.number.isRequired,
     setSpeedChoice: PropTypes.func.isRequired,
+    colorAttr: PropTypes.number.isRequired,
+    setColorAttr: PropTypes.func.isRequired,
 }

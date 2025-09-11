@@ -56,6 +56,7 @@ function App() {
     const [currentIndex, setCurrentIndex] = useState([]);
     const [speedChoice, setSpeedChoice] = useState(0);
     let speedChosen = useRef(120);
+    const [colorAttr, setColorAttr] = useState(-1);
     const trainsAttrs = {
         // Posição 1 = Jogador de linha; Posição 2 = GK
         1: [[5, 8, 13], [2, 13]],
@@ -128,7 +129,8 @@ function App() {
                             speedChosen={speedChosen}
                             speedChoice={speedChoice}
                             setSpeedChoice={setSpeedChoice}
-
+                            colorAttr={colorAttr}
+                            setColorAttr={setColorAttr}
                 />
                 <Trainings exercises={exercises}
                            attrs={positionsList[0] !== 'GK' ? attributes : attributesGK}
@@ -158,6 +160,7 @@ function App() {
                            originalPacks={originalPacks}
                            setOriginalPacks={setOriginalPacks}
                            speedChosen={speedChosen.current}
+                           colorAttr={colorAttr}
                 />
             </div>
         </>
