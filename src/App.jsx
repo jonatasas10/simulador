@@ -6,6 +6,8 @@ import {useState, useRef, useEffect} from "react";
 function App() {
     const [attrValues, setAttrValues] = useState(Array(15).fill(null));
     const [originalAttributes, setOriginAttributes] = useState(Array(15).fill(null));
+    const [pureAttributes, setPureAttributes] = useState(Array(15).fill(1));
+    const [classJogador, setClassJogador] = useState(0);
     const [seqCount, setSeqCount] = useState([]);
     const [prev, setPrev] = useState([]);
     const [reset, setReset] = useState(true);
@@ -98,6 +100,16 @@ function App() {
         setCurrentPacks(originalPacks - packs);
     }, [originalPacks, packs]);
 
+    useEffect(() => {
+        const attributes = [...originalAttributes];
+        for (let i = 0; i <= attributes.length - 1; i++) {
+            if (playerPositions[i] === 2){
+                attributes[i] -= classJogador;
+            }
+        }
+        setPureAttributes(attributes);
+    },[classJogador,setPureAttributes, originalAttributes, playerPositions]);
+
     return (
         <>
             <h1 style={{textAlign: "center"}}>Simulador</h1>
@@ -131,6 +143,8 @@ function App() {
                             setSpeedChoice={setSpeedChoice}
                             colorAttr={colorAttr}
                             setColorAttr={setColorAttr}
+                            setClassJogador={setClassJogador}
+                            classJogador={classJogador}
                 />
                 <Trainings exercises={exercises}
                            attrs={positionsList[0] !== 'GK' ? attributes : attributesGK}
@@ -161,6 +175,10 @@ function App() {
                            setOriginalPacks={setOriginalPacks}
                            speedChosen={speedChosen.current}
                            colorAttr={colorAttr}
+                           pureAttr = {pureAttributes}
+                           setPureAttr = {setPureAttributes}
+                           classJogador={classJogador}
+
                 />
             </div>
         </>

@@ -42,7 +42,7 @@
 }
 
 .inputTable{
-    padding: 0px; /* Add padding inside the input for better click area */
+    padding: 0; /* Add padding inside the input for better click area */
     width: 70px;
     height: 25px;
     display: block;
@@ -69,6 +69,30 @@
     margin-right: 0;
     cursor: pointer;
 }
+
+.buttonsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Garante que os botões fiquem distribuídos entre as extremidades */
+
+}
+
+.buttonNext{
+    margin-top: 10px;
+    padding: 5px 59px;
+    margin-left: 10px;
+    margin-right: 0;
+    cursor: pointer;
+}
+.buttonPrev{
+    margin-top: 10px;
+    padding: 5px 47px;
+    margin-left: 10px;
+    margin-right: 0;
+    cursor: pointer;
+}
+
+
 .inputSpeed{
     margin-top: 10px;
     padding: 5px 28px;

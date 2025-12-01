@@ -34,6 +34,8 @@ function Attributes(props) {
     Object.keys(aux).forEach((key) => {
         attributes.push(aux[key]);
     });
+    const setClassJogador = props.setClassJogador;
+    const classJogador = props.classJogador;
 
     useEffect(() => {
         const positionsNumbers= {
@@ -109,18 +111,6 @@ function Attributes(props) {
             }
         }
     }
-    const playerAvg = (arr) => {
-        const sum = (arr.reduce((a, b) => {
-            /*a = parseInt(a);
-            b = parseInt(b);*/
-            return a + b;
-        }));
-        if(isNaN(sum)){
-            return "";
-        }
-        return (sum / 15).toFixed(0);
-    }
-
     const resetAttributes = () => {
         const attrs = [...originalAttributes];
         setPacks(0);
@@ -133,6 +123,18 @@ function Attributes(props) {
         setPrev([]);
         setAdd(0);
         setCurrentPacks(originalPacks);
+    }
+
+    const season = (opt) => {
+        let aux = [...attrValues]
+        if (opt === 1){
+            let adc = aux.map(item => item - 20)
+            setAttrValues(adc);
+        }
+        else if (opt === 2){
+            let adc = aux.map(item => item + 20)
+            setAttrValues(adc);
+        }
     }
 
     const handleSpeedChange = (e) => {
@@ -158,6 +160,12 @@ function Attributes(props) {
         setOriginalPacks(intValue);
         setCurrentPacks(intValue);
         setAdd(0);
+    }
+
+    const handleInputClassChange = (e) => {
+        const value = e.target.value;
+        const intValue = value === '' ? '' : Number(value);
+        setClassJogador(intValue);
     }
 
     const filterPositions = (index) => {
@@ -298,8 +306,7 @@ function Attributes(props) {
                 {attributes.map((attribute, attrIndex) => (
                     <tr className={playerPositions[attrIndex] === 1 ? TableStyles.attrColorGray : TableStyles.attrWhite}
                         key={attrIndex}>
-                        <td onClick={(event) => {
-                            //console.log("CLICKED", event.target, attribute);
+                        <td onClick={() => {
                             setColorAttr(attrIndex !== colorAttr ? attrIndex : -1);
                             }
                         }
@@ -355,17 +362,37 @@ function Attributes(props) {
                     <td>Maletas usadas</td>
                     <td>{parseFloat(packs.toFixed(0))}</td>
                 </tr>
+                <tr className={TableStyles.attrWhite}>
+                    <td>Classe</td>
+                    <td>
+                        <input className={TableStyles.inputTable}
+                               type="text"
+                               onChange={(e) => handleInputClassChange(e)}
+                               onClick={event => {
+                                   event.target.value = ''
+                               }}
+                               value={classJogador !== null ? classJogador : ''}
+                        />
+                    </td>
+                </tr>
                 </tbody>
             </table>
-            <button className={TableStyles.buttonReset} onClick={resetAttributes}>Resetar simulação</button>
-            <select value={speedChoice} onChange={(e) => handleSpeedChange(e)}
-                    className={TableStyles.inputSpeed}
-            >
-                <option value="">Velocidade</option>
-                <option value="1">Lento</option>
-                <option value="2">Normal</option>
-                <option value="3">Rápido</option>
-            </select>
+            <div className={TableStyles.buttonsContainer}>
+                <button className={TableStyles.buttonReset} onClick={resetAttributes}>Resetar simulação</button>
+                <select value={speedChoice} onChange={(e) => handleSpeedChange(e)}
+                        className={TableStyles.inputSpeed}
+                >
+                    <option value="">Velocidade</option>
+                    <option value="1">Lento</option>
+                    <option value="2">Normal</option>
+                    <option value="3">Rápido</option>
+                </select>
+            </div>
+            <div className={TableStyles.buttonsContainer}>
+                <button className={TableStyles.buttonNext} onClick={() => {season(1)}}>Próxima</button>
+                <button className={TableStyles.buttonPrev} onClick={() => {season(2)}}>Anterior</button>
+            </div>
+
         </div>
     );
 }
@@ -399,4 +426,6 @@ Attributes.propTypes = {
     setSpeedChoice: PropTypes.func.isRequired,
     colorAttr: PropTypes.number.isRequired,
     setColorAttr: PropTypes.func.isRequired,
+    classJogador: PropTypes.number.isRequired,
+    setClassJogador: PropTypes.func.isRequired,
 }

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counter, setCounter, sequence,
                     setSequence, playerPositions, currentAvg, setCurrentAvg, add, setAdd, positionsList,
                     seqCount, setSeqCount, currentIndex, setCurrentIndex, prev, setPrev,
-                    setCurrentPacks, originalPacks, speedChosen, colorAttr}) {
+                    setCurrentPacks, originalPacks, speedChosen, colorAttr, pureAttr, originalAttributes, classJogador}) {
 
     const [removeIndex, setRemoveIndex] = useState(0);
     const intervalRef = useRef(null);
@@ -108,7 +108,8 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                         item = item < 400 ? item + position[index] / 2 : item;
                         sum += position[index] / 2;
                     }
-                    sumTotal.push(item);
+
+                    sumTotal.push(item - originalAttributes[index] + pureAttr[index]);
                 }
                 return item;
             });
@@ -121,7 +122,16 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             setCurrentAvg(media);
             setAdd(sum);
             let [whiteAttr, whiteAttrIndex] = attrChosen(attr);
-            const train = `${trainsOptions[attr]} = ${whiteAttr} = ${Math.floor(sumTotal[whiteAttrIndex]).toFixed(0)}`;
+
+
+            let classeJg = 0
+            for (let item in attrs){
+                if ( whiteAttr === attrs[item] && playerPositions[item] === 2 ){
+
+                    classeJg = classJogador;
+                }
+            }
+            const train = `${trainsOptions[attr]} = ${whiteAttr} = ${Math.floor(sumTotal[whiteAttrIndex]+classeJg).toFixed(0)}`;
             const seqAux = [...sequence];
             if(sumTotal.length > 0){
                 if (seqAux.length > 0 &&
@@ -160,7 +170,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                         item = item < 400 ? item - position[index] / 2 : item;
                         sub = sub - position[index] / 2;
                     }
-                    subTotal.push(item);
+                    subTotal.push(item - originalAttributes[index] + pureAttr[index]);
                 }
                 return item;
             });
@@ -169,8 +179,15 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             setAdd(sub);
 
             let [whiteAttr, whiteAttrIndex] = attrChosen(attr);
+            let classeJg = 0
+            for (let item in attrs){
+                if ( whiteAttr === attrs[item] && playerPositions[item] === 2 ){
+
+                    classeJg = classJogador;
+                }
+            }
             //const train = `${trainsOptions[attr]} = ${whiteAttr} = ${subTotal[whiteAttrIndex].toFixed(0)}`;
-            const train = `${trainsOptions[attr]} = ${whiteAttr} = ${Math.floor(subTotal[whiteAttrIndex]).toFixed(0)}`;
+            const train = `${trainsOptions[attr]} = ${whiteAttr} = ${Math.floor(subTotal[whiteAttrIndex] + classeJg).toFixed(0)}`;
 
             if (subTotal.length > 0) {
                 if (seqAuxSub.length > 0 && seqAuxSub[seqAuxSub.length-1].includes(trainsOptions[attr])) {
@@ -185,9 +202,9 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                 }
             }
 
-
             return updatedValues;
         });
+
     }
 
     const handleMouseDown = (attrIndex, move) => {
@@ -262,11 +279,12 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
         const handleAverageChange = (updatedValues) => {
             const newVal = [...avg];
             const aux = [...updatedValues];
+
             exercises.map((item, index) => {
                 let sum = 0;
                 if (positionsList[0] === 'GK' || index !== 12){
                     for (let key in item){
-                        sum += parseInt(aux[item[key]]);
+                        sum += (parseInt(aux[item[key]]) - parseInt(originalAttributes[item[key]]) + parseInt(pureAttr[item[key]]));
                     }
                 }
                 const avgExercise = sum / item.length;
@@ -325,7 +343,7 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
             }
         }
         // // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [attrValues, exercises, counter, prev, currentIndex, sequence, setSequence, removeIndex, avg, setCounter, seqCount, setSeqCount, positionsList, setCurrentIndex, setPrev]);
+    }, [originalAttributes, pureAttr,attrValues, exercises, counter, prev, currentIndex, sequence, setSequence, removeIndex, avg, setCounter, seqCount, setSeqCount, positionsList, setCurrentIndex, setPrev]);
 
     return(
         <div className={TableStyles['train-container']}>
@@ -409,4 +427,6 @@ Trainings.propTypes = {
     setOriginalPacks: PropTypes.func.isRequired,
     speedChosen: PropTypes.number,
     colorAttr: PropTypes.number,
+    pureAttr: PropTypes.array.isRequired,
+    classJogador: PropTypes.number.isRequired,
 }
