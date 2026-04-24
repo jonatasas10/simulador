@@ -360,8 +360,12 @@ function Trainings({attrValues, setAttrValues, attrs, exercises,setPacks, counte
                     <tr key={attrIndex}>
                         {brancos[attrIndex].length > 0 || cinzas[attrIndex].length > 0?
                             <>
-                                <td>{attribute.charAt(0).toUpperCase() + attribute.slice(1)}</td>
-                                <td>{brancos[attrIndex]}</td>
+                                <td
+                                    style={colorAttr >= 0 && exercises[attrIndex].includes(colorAttr) ? {color: 'darkcyan', cursor: 'pointer', fontWeight: 700} : {cursor: 'pointer'}}
+                                >{attribute.charAt(0).toUpperCase() + attribute.slice(1)}
+                                </td>
+                                <td>{brancos[attrIndex]}
+                                </td>
                                 <td>{cinzas[attrIndex]}</td>
                                 <td>{avg[attrIndex]}%</td>
                                 <td>
